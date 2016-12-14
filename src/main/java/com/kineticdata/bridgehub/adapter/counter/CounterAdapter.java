@@ -35,6 +35,20 @@ public class CounterAdapter implements BridgeAdapter {
     
     /** Defines the logger */
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(CounterAdapter.class);
+
+    /** Adapter version constant. */
+    public static String VERSION;
+    /** Load the properties version from the version.properties file. */
+    static {
+        try {
+            java.util.Properties properties = new java.util.Properties();
+            properties.load(CounterAdapter.class.getResourceAsStream("/"+CounterAdapter.class.getName()+".version"));
+            VERSION = properties.getProperty("version");
+        } catch (IOException e) {
+            logger.warn("Unable to load "+CounterAdapter.class.getName()+" version properties.", e);
+            VERSION = "Unknown";
+        }
+    }
     
     Integer counter;
     Integer chunkSize;
@@ -60,7 +74,7 @@ public class CounterAdapter implements BridgeAdapter {
     
     @Override
     public String getVersion() {
-       return  "1.0.1";
+       return  VERSION;
     }
     
     @Override
@@ -116,7 +130,7 @@ public class CounterAdapter implements BridgeAdapter {
         }
         
         Map<String,Object> counterObject = new LinkedHashMap<String,Object>();
-        counterObject.put("count", counter);
+        counterObject.put("count", counter.toString());
         
         return new Record(counterObject);
     }
